@@ -1,0 +1,154 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Day 1: Historian Hysteria
+
+```elixir
+Mix.install([
+  {:kino_aoc, "~> 0.1.5"}
+])
+```
+
+## Part One
+
+The _Chief Historian_ is always present for the big Christmas sleigh launch, but nobody has seen him in months! Last anyone heard, he was visiting locations that are historically significant to the North Pole; a group of Senior Historians has asked you to accompany them as they check the places they think he was most likely to visit.
+
+As each location is checked, they will mark it on their list with a _star_. They figure the Chief Historian _must_ be in one of the first fifty places they'll look, so in order to save Christmas, you need to help them get _fifty stars_ on their list before Santa takes off on December 25th.
+
+Collect stars by solving puzzles. Two puzzles will be made available on each day in the Advent calendar; the second puzzle is unlocked when you complete the first. Each puzzle grants _one star_. Good luck!
+
+You haven't even left yet and the group of Elvish Senior Historians has already hit a problem: their list of locations to check is currently _empty_. Eventually, someone decides that the best place to check first would be the Chief Historian's office.
+
+Upon pouring into the office, everyone confirms that the Chief Historian is indeed nowhere to be found. Instead, the Elves discover an assortment of notes and lists of historically significant locations! This seems to be the planning the Chief Historian was doing before he left. Perhaps these notes can be used to determine which locations to search?
+
+Throughout the Chief's office, the historically significant locations are listed not by name but by a unique number called the _location ID_. To make sure they don't miss anything, The Historians split into two groups, each searching the office and trying to create their own complete list of location IDs.
+
+There's just one problem: by holding the two lists up _side by side_ (your puzzle input), it quickly becomes clear that the lists aren't very similar. Maybe you can help The Historians reconcile their lists?
+
+For example:
+
+```
+3   4
+4   3
+2   5
+1   3
+3   9
+3   3
+```
+
+Maybe the lists are only off by a small amount! To find out, pair up the numbers and measure how far apart they are. Pair up the _smallest number in the left list_ with the _smallest number in the right list_, then the _second-smallest left number_ with the _second-smallest right number_, and so on.
+
+Within each pair, figure out _how far apart_ the two numbers are; you'll need to _add up all of those distances_. For example, if you pair up a `3` from the left list with a `7` from the right list, the distance apart is `4`; if you pair up a `9` with a `3`, the distance apart is `6`.
+
+In the example list above, the pairs and distances would be as follows:
+
+* The smallest number in the left list is `1`, and the smallest number in the right list is `3`. The distance between them is _`2`_.
+* The second-smallest number in the left list is `2`, and the second-smallest number in the right list is another `3`. The distance between them is _`1`_.
+* The third-smallest number in both lists is `3`, so the distance between them is _`0`_.
+* The next numbers to pair up are `3` and `4`, a distance of _`1`_.
+* The fifth-smallest numbers in each list are `3` and `5`, a distance of _`2`_.
+* Finally, the largest number in the left list is `4`, while the largest number in the right list is `9`; these are a distance _`5`_ apart.
+
+To find the _total distance_ between the left list and the right list, add up the distances between all of the pairs you found. In the example above, this is `2 + 1 + 0 + 1 + 2 + 5`, a total distance of _`11`_!
+
+Your actual left and right lists contain many location IDs. _What is the total distance between your lists?_
+
+<!-- livebook:{"attrs":"eyJhc3NpZ25fdG8iOiJwdXp6bGVfaW5wdXQiLCJkYXkiOiIxIiwic2Vzc2lvbl9zZWNyZXQiOiJBT0MyMDI0X1NFU1NJT04iLCJ5ZWFyIjoiMjAyNCJ9","chunks":null,"kind":"Elixir.KinoAOC.HelperCell","livebook_object":"smart_cell"} -->
+
+```elixir
+{:ok, puzzle_input} =
+  KinoAOC.download_puzzle("2024", "1", System.fetch_env!("LB_AOC2024_SESSION"))
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:ok,
+ "15244   50562\n81245   49036\n92897   21393\n63271   60643\n49672   33212\n92232   76048\n53492   58600\n92941   61161\n58509   86979\n28174   73806\n70084   21118\n24410   68037\n84499   63407\n66548   35177\n65580   63759\n87805   49036\n83099   19486\n18390   12243\n26848   76511\n18807   86451\n72147   24247\n79927   19614\n11257   32484\n58028   46123\n75951   64756\n50715   78058\n95795   74458\n32111   39063\n46546   38789\n72734   39167\n98182   93444\n62716   53597\n89475   25175\n39176   55091\n40923   88724\n62512   51774\n86618   93444\n52758   47249\n13428   93526\n21791   94210\n93809   21118\n17938   14392\n60129   64756\n70192   49036\n12155   79882\n40333   53270\n23806   88706\n46661   85277\n88336   57672\n87513   36284\n41580   97455\n39488   79018\n53900   78058\n63780   98092\n18471   20090\n77849   73059\n93111   78100\n52950   22317\n81379   35177\n91351   19771\n14227   53597\n51335   39645\n98624   98092\n21994   54585\n60107   60337\n63161   47739\n42618   96226\n94665   84252\n79153   34048\n78730   80552\n75722   70308\n68857   47918\n88672   98092\n59881   27613\n85772   32111\n30276   98092\n14586   84246\n67593   49036\n72269   13771\n25858   56490\n33541   15922\n16446   54557\n47844   62540\n78173   49722\n50682   88706\n75282   74146\n62042   83481\n18797   76066\n24212   35217\n55048   57348\n91631   84573\n93807   97649\n88119   98092\n19366   77445\n76255   50452\n98264   93444\n64583   34766\n96480   54682\n67367   64709\n12629   53597\n55622   98092\n48715   75722\n38717   98460\n88940   42098\n57583   21667\n13512   32111\n89814   60737\n64756   93444\n16224   53597\n10346   46433\n73809   55198\n80544   20677\n11856   76359\n59087   21118\n72673   20090\n49449   45231\n20810   98650\n28257   76359\n72761   88706\n87721   84970\n33910   17682\n71512   76359\n51593   34928\n52645   73953\n65785   21745\n29202   39203\n84191   30175\n90538   28190\n36816   33095\n74544   38282\n97584   54184\n58739   93390\n75540   64756\n68067   64756\n52407   25292\n15044   66413\n20591   93444\n25885   37703\n26653   32104\n42596   88313\n23950   64756\n52254   88313\n70806   44075\n42195   20677\n36372   36394\n47944   93575\n38297   21118\n19998   76359\n88241   78058\n73698   44859\n92258   29814\n98092   78058\n28030   88927\n53514   59214\n77999   30893\n66582   71673\n79423   10257\n46938   86494\n42971   21118\n11339   13583\n71889   43763\n25429   62716\n81687   15843\n35428   14294\n21885   88053\n98374   37224\n81362   34784\n41486   20677\n20831   98092\n26838   45057\n89226   64709\n11351   66528\n20955   49036\n34764   42441\n43198   21118\n54892   21799\n64587   51818\n62645   88706\n39255   32111\n65266   40330\n20283   30516\n56574   21118\n12809   35177\n23338   15079\n58721   76273\n68541   33747\n46673   34048\n59073   25694\n80216   62716\n81975   28478\n44297   45993\n34344   98092\n63009   28253\n43350   24492\n95286   35177\n33964   82330\n87854   76359\n23407   81183\n95569   74797\n45440   77445\n80991   19568\n30893   61274\n26305   69824\n60205   68773\n12663   76359\n43419   89650\n39569   77945\n73240   17501\n84277   39378\n94177   89662\n95690   94786\n92242   91731\n73905   51412\n35977   13583\n27680   20677\n79830   79733\n84278   52001\n85984   62716\n39122   37115\n78800   35929\n33253   76179\n83659   33516\n91248   15310\n89362   39762\n15884   24386\n98545   18731\n15249   34048\n47287   77445\n68392   27779\n62854   73116\n43214   39063\n65154   73341\n71451   89287\n85490   10108\n10175   60337\n79597   54843\n15040   15044\n96993   21393\n36177   66813\n44659   38606\n10713   49127\n95267   84970\n38841   75464\n33233   71632\n73302   93444\n40471   21118\n26947   80385\n39627   51365\n47637   30893\n53778   29214\n79782   45138\n10038   45411\n86184   64709\n69322   93444\n70602   88706\n85109   49036\n58501   31677\n97931   25694\n24913   88313\n19478   93437\n51774   23744\n45194   46530\n78436   13583\n75773   53334\n24862   77445\n98325   49788\n68242   44288\n21878   78058\n22527   15044\n53407   98092\n33702   78511\n76946   86061\n34943   94066\n66974   23236\n87132   37827\n28641   88706\n78825   49515\n14741   98092\n56627   38087\n47539   85498\n40528   88706\n71885   11213\n83869   60337\n13761   97944\n75267   94765\n76391   40872\n84919   45561\n82510   26839\n42950   66528\n53597   88930\n51068   43621\n41152   77639\n82758   " <> ...}
+```
+
+```elixir
+[left, right] = 
+  puzzle_input
+  |> String.split()
+  |> Enum.map(&String.to_integer/1)
+  |> Enum.chunk_every(2)
+  |> Enum.zip_with(&Function.identity/1) # transpose
+  |> Enum.map(&Enum.sort/1)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[
+  [10038, 10073, 10109, 10175, 10346, 10452, 10612, 10667, 10713, 10728, 10838, 10964, 11001, 11051,
+   11172, 11257, 11298, 11339, 11344, 11351, 11610, 11631, 11795, 11856, 11929, 12155, 12169, 12187,
+   12271, 12553, 12629, 12663, 12664, 12680, 12809, 12837, 12885, 12978, 13170, 13236, 13298, 13428,
+   13432, 13512, 13583, 13602, 13718, 13761, 13942, ...],
+  [10033, 10076, 10095, 10100, 10108, 10157, 10161, 10257, 10573, 11213, 11217, 11414, 11552, 12243,
+   12268, 12532, 12544, 12555, 12621, 12724, 13043, 13060, 13250, 13382, 13514, 13583, 13583, 13583,
+   13583, 13583, 13583, 13583, 13583, 13583, 13583, 13583, 13583, 13583, 13583, 13771, 14093, 14101,
+   14294, 14392, 14446, 14578, 14667, 14892, ...]
+]
+```
+
+```elixir
+[left, right]
+|> Enum.zip_with(fn [fst, snd] -> abs(fst - snd) end)
+|> Enum.sum()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+1660292
+```
+
+## Part Two
+
+Your analysis only confirmed what everyone feared: the two lists of location IDs are indeed very different.
+
+Or are they?
+
+The Historians can't agree on which group made the mistakes _or_ how to read most of the Chief's handwriting, but in the commotion you notice an interesting detail: <span title="We were THIS close to summoning the Alot of Location IDs!">a lot</span> of location IDs appear in both lists! Maybe the other numbers aren't location IDs at all but rather misinterpreted handwriting.
+
+This time, you'll need to figure out exactly how often each number from the left list appears in the right list. Calculate a total _similarity score_ by adding up each number in the left list after multiplying it by the number of times that number appears in the right list.
+
+Here are the same example lists again:
+
+```
+3   4
+4   3
+2   5
+1   3
+3   9
+3   3
+```
+
+For these example lists, here is the process of finding the similarity score:
+
+* The first number in the left list is `3`. It appears in the right list three times, so the similarity score increases by `3 * 3 = 9`.
+* The second number in the left list is `4`. It appears in the right list once, so the similarity score increases by `4 * 1 = 4`.
+* The third number in the left list is `2`. It does not appear in the right list, so the similarity score does not increase (`2 * 0 = 0`).
+* The fourth number, `1`, also does not appear in the right list.
+* The fifth number, `3`, appears in the right list three times; the similarity score increases by _`9`_.
+* The last number, `3`, appears in the right list three times; the similarity score again increases by _`9`_.
+
+So, for these example lists, the similarity score at the end of this process is _`31`_ (`9 + 4 + 0 + 0 + 9 + 9`).
+
+Once again consider your left and right lists. _What is their similarity score?_
+
+```elixir
+right_frequencies = right |> Enum.frequencies()
+
+left
+|> Enum.map(&Map.get(right_frequencies, &1, 0) * &1)
+|> Enum.sum()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+22776016
+```
+
+<!-- livebook:{"offset":11754,"stamp":{"token":"XCP.XqDw3F2PogK0w47G7NheVk9hGM7zCURUH5GgpVL4iMRQ8cWw5ZnXliWtVfOJQFERyHijOU5PoBBsl4N6hq_vaHi_k-eYkIGLTYwJJYHex3s9kJNBJI9SV_NT","version":2}} -->
